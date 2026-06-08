@@ -9,6 +9,13 @@ a **React + TypeScript** frontend, using **Google Gemini (Vertex AI)** for
 personalized advice and **Firestore** for tracking, deployed to **Google Cloud
 Run** as one container.
 
+## 🔗 Live demo
+
+**<https://carbon-platform-988953139540.us-central1.run.app>**
+
+> Running on Cloud Run with live Gemini (Vertex AI) insights and Firestore-backed
+> tracking in project `virtual-prompt-week-3` (`us-central1`).
+
 ---
 
 ## 1. Chosen vertical
@@ -30,7 +37,7 @@ brief:
 
 ### The decision flow (smart, context-driven assistant)
 
-```
+```text
 User inputs (transport, home, diet, consumption)
         │
         ▼
@@ -73,7 +80,7 @@ to **annual kg CO₂e**.
 
 ### Architecture
 
-```
+```text
 Browser (React + TS, Vite)              Cloud Run (single container)
   • accessible UI + bar chart  ──HTTP──► FastAPI
   • anonymous device id (localStorage)    ├─ POST /api/calculate  pure carbon engine
@@ -93,7 +100,7 @@ account) — **there are no API keys or secrets in the repository**.
 
 ### Project layout
 
-```
+```text
 backend/    FastAPI app — carbon engine, insights, repository, routes, tests
 frontend/   React + TS SPA — components, api client, accessible UI, tests
 Dockerfile  multi-stage build (node build → python runtime)
@@ -174,7 +181,7 @@ gcloud run deploy carbon-platform \
 #   roles/aiplatform.user  (Gemini)   and   roles/datastore.user  (Firestore)
 ```
 
-> **Live deployment:** _add the Cloud Run URL here after deploying._
+> **Live deployment:** <https://carbon-platform-988953139540.us-central1.run.app>
 
 ---
 

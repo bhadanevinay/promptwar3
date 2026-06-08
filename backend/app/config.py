@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     # Feature flags — let the app degrade gracefully without GCP access.
     use_gemini: bool = True
     use_firestore: bool = True
-    gemini_model: str = "gemini-2.0-flash"
+    gemini_model: str = "gemini-2.5-flash"
 
     # CORS (the SPA is same-origin in prod; this matters for local dev).
     allowed_origins: str = "http://localhost:5173,http://127.0.0.1:5173"

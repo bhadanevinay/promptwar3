@@ -82,7 +82,10 @@ def _call_gemini(data: CarbonInput, result: FootprintResult, settings: Settings)
             response_mime_type="application/json",
             response_schema=_RESPONSE_SCHEMA,
             temperature=0.4,
-            max_output_tokens=800,
+            # Gemini 2.5 models "think" before answering, and thinking tokens
+            # share this budget. Keep it generous so reasoning plus the final
+            # structured JSON always fit and the response is never truncated.
+            max_output_tokens=4096,
         ),
     )
     payload = json.loads(response.text)
