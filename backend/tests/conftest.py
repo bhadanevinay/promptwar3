@@ -16,6 +16,7 @@ except ImportError:
     sys.modules["google.genai.types"] = MagicMock()
     try:
         import google
+
         google.genai = genai_mock  # type: ignore
     except ImportError:
         google_mock = MagicMock()

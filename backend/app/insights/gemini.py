@@ -78,7 +78,9 @@ def _call_gemini(
     keeps unit tests and the rule-based path dependency-free.
     """
     if genai is None or types is None:
-        raise RuntimeError("Google GenAI SDK (google-genai) is not installed in the active environment.")
+        raise RuntimeError(
+            "Google GenAI SDK (google-genai) is not installed in the active environment."
+        )
 
     client = genai.Client(vertexai=True, project=settings.project_id, location=settings.region)
     response = client.models.generate_content(
