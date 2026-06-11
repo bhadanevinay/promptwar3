@@ -21,6 +21,8 @@ _MAX_WASTE_WEEK = 1_000.0
 
 
 class TransportInput(BaseModel):
+    """Weekly travel habits plus yearly flight counts."""
+
     car_km_per_week: float = Field(0, ge=0, le=_MAX_KM_WEEK)
     car_fuel: CarFuel = CarFuel.PETROL
     public_transit_km_per_week: float = Field(0, ge=0, le=_MAX_KM_WEEK)
@@ -29,12 +31,16 @@ class TransportInput(BaseModel):
 
 
 class HomeInput(BaseModel):
+    """Monthly household energy use, shared across the household size."""
+
     electricity_kwh_per_month: float = Field(0, ge=0, le=_MAX_KWH_MONTH)
     natural_gas_kwh_per_month: float = Field(0, ge=0, le=_MAX_KWH_MONTH)
     household_size: int = Field(1, ge=1, le=50)
 
 
 class ConsumptionInput(BaseModel):
+    """Consumer goods spending and landfill waste."""
+
     goods_spend_usd_per_month: float = Field(0, ge=0, le=_MAX_USD_MONTH)
     waste_kg_per_week: float = Field(0, ge=0, le=_MAX_WASTE_WEEK)
 
@@ -49,6 +55,8 @@ class CarbonInput(BaseModel):
 
 
 class Comparison(BaseModel):
+    """The user's total in context: global average and sustainable target."""
+
     global_average_annual_kg: float
     sustainable_target_annual_kg: float
     ratio_to_global_average: float
@@ -66,12 +74,16 @@ class FootprintResult(BaseModel):
 
 # ── Insights ──────────────────────────────────────────────────────────
 class Recommendation(BaseModel):
+    """One concrete reduction action with a quantified annual saving."""
+
     category: str
     action: str
     estimated_annual_savings_kg: float
 
 
 class InsightsResponse(BaseModel):
+    """Personalized advice: a summary plus ranked recommendations."""
+
     summary: str
     recommendations: list[Recommendation]
     source: str  # "gemini" | "rules"
@@ -79,11 +91,15 @@ class InsightsResponse(BaseModel):
 
 # ── Entries (tracking history) ────────────────────────────────────────
 class EntryCreate(BaseModel):
+    """Request payload to save a footprint snapshot for an anonymous device."""
+
     device_id: str = Field(min_length=8, max_length=128, pattern=r"^[A-Za-z0-9_-]+$")
     input: CarbonInput
     result: FootprintResult
 
 
 class Entry(EntryCreate):
+    """A stored footprint snapshot, as returned by the API."""
+
     id: str
     created_at: str  # ISO-8601 UTC

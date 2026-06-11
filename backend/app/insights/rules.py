@@ -14,6 +14,13 @@ from __future__ import annotations
 from app.carbon import factors
 from app.models import CarbonInput, FootprintResult, InsightsResponse, Recommendation
 
+# Achievable reduction shares behind each recommendation's savings estimate.
+# Deliberately conservative round figures for awareness-level guidance:
+_FLIGHT_REDUCTION_SHARE = 0.5  # replace/combine flights → roughly halve aviation
+_HOME_ENERGY_REDUCTION_SHARE = 0.33  # renewable tariff + insulation → ~a third
+_CONSUMPTION_REDUCTION_SHARE = 0.25  # durable/second-hand goods, less landfill
+_GENERIC_TRANSPORT_REDUCTION_SHARE = 0.2  # carpooling/transit for routine trips
+
 # Diet types ordered from highest to lowest annual footprint.
 _DIET_LADDER = [
     factors.DietType.HEAVY_MEAT,
@@ -31,7 +38,7 @@ def _transport_recommendation(data: CarbonInput, amount: float) -> Recommendatio
         t.short_haul_flights_per_year * factors.SHORT_HAUL_TRIP_KM
         + t.long_haul_flights_per_year * factors.LONG_HAUL_TRIP_KM
     )
-    car_km_year = t.car_km_per_week * 52
+    car_km_year = t.car_km_per_week * factors.WEEKS_PER_YEAR
     car_emissions = car_km_year * factors.CAR_FACTORS_PER_KM[t.car_fuel]
     flying = t.short_haul_flights_per_year + t.long_haul_flights_per_year > 0
     # Address whichever sub-source is larger: flying or driving.
@@ -40,7 +47,7 @@ def _transport_recommendation(data: CarbonInput, amount: float) -> Recommendatio
             category="transport",
             action="Replace one or more flights per year with rail or video calls, "
             "and combine trips to halve your aviation emissions.",
-            estimated_annual_savings_kg=round(0.5 * amount, 2),
+            estimated_annual_savings_kg=round(_FLIGHT_REDUCTION_SHARE * amount, 2),
         )
     if t.car_km_per_week > 0 and t.car_fuel != factors.CarFuel.ELECTRIC:
         # Estimate savings from switching the car to electric.
@@ -58,7 +65,7 @@ def _transport_recommendation(data: CarbonInput, amount: float) -> Recommendatio
         return Recommendation(
             category="transport",
             action="Carpool or use public transit for routine journeys to cut transport emissions.",
-            estimated_annual_savings_kg=round(0.2 * amount, 2),
+            estimated_annual_savings_kg=round(_GENERIC_TRANSPORT_REDUCTION_SHARE * amount, 2),
         )
     return None
 
@@ -70,7 +77,7 @@ def _home_recommendation(amount: float) -> Recommendation | None:
         category="home",
         action="Switch to a renewable electricity tariff and improve insulation/thermostat "
         "settings to cut roughly a third of home energy emissions.",
-        estimated_annual_savings_kg=round(0.33 * amount, 2),
+        estimated_annual_savings_kg=round(_HOME_ENERGY_REDUCTION_SHARE * amount, 2),
     )
 
 
@@ -99,7 +106,7 @@ def _consumption_recommendation(amount: float) -> Recommendation | None:
         category="consumption",
         action="Buy less and choose durable, second-hand or repairable goods, and reduce "
         "landfill waste by recycling and composting.",
-        estimated_annual_savings_kg=round(0.25 * amount, 2),
+        estimated_annual_savings_kg=round(_CONSUMPTION_REDUCTION_SHARE * amount, 2),
     )
 
 

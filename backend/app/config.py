@@ -14,6 +14,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    """Validated application settings, sourced from the environment / .env."""
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     # Google Cloud
@@ -30,10 +32,11 @@ class Settings(BaseSettings):
 
     @property
     def origins_list(self) -> list[str]:
+        """Parse the comma-separated CORS origins into a clean list."""
         return [o.strip() for o in self.allowed_origins.split(",") if o.strip()]
 
 
 @lru_cache
 def get_settings() -> Settings:
-    """Cached settings singleton (read once per process)."""
+    """Return the cached settings singleton (read once per process)."""
     return Settings()

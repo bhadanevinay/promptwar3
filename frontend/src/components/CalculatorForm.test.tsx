@@ -27,6 +27,51 @@ describe("CalculatorForm", () => {
     expect(payload.diet).toBe("vegan");
   });
 
+  it("captures every field of a fully filled-in form", async () => {
+    const onSubmit = vi.fn();
+    render(<CalculatorForm onSubmit={onSubmit} loading={false} />);
+
+    const fill = async (label: RegExp, value: string) => {
+      const field = screen.getByLabelText(label);
+      await userEvent.clear(field);
+      await userEvent.type(field, value);
+    };
+
+    await fill(/car distance per week/i, "100");
+    await userEvent.selectOptions(screen.getByLabelText(/car fuel type/i), "electric");
+    await fill(/public transit per week/i, "40");
+    await fill(/short-haul flights/i, "2");
+    await fill(/long-haul flights/i, "1");
+    await fill(/electricity per month/i, "250");
+    await fill(/natural gas per month/i, "120");
+    await fill(/people in household/i, "3");
+    await userEvent.selectOptions(screen.getByLabelText(/diet/i), "vegetarian");
+    await fill(/goods spending per month/i, "300");
+    await fill(/landfill waste per week/i, "5");
+    await userEvent.click(screen.getByRole("button", { name: /calculate my footprint/i }));
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+    expect(onSubmit.mock.calls[0][0]).toEqual({
+      transport: {
+        car_km_per_week: 100,
+        car_fuel: "electric",
+        public_transit_km_per_week: 40,
+        short_haul_flights_per_year: 2,
+        long_haul_flights_per_year: 1,
+      },
+      home: {
+        electricity_kwh_per_month: 250,
+        natural_gas_kwh_per_month: 120,
+        household_size: 3,
+      },
+      diet: "vegetarian",
+      consumption: {
+        goods_spend_usd_per_month: 300,
+        waste_kg_per_week: 5,
+      },
+    });
+  });
+
   it("disables the submit button and marks it busy while loading", () => {
     render(<CalculatorForm onSubmit={() => {}} loading={true} />);
     const button = screen.getByRole("button", { name: /calculating/i });

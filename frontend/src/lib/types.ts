@@ -64,6 +64,7 @@ export interface Entry {
   result: FootprintResult;
 }
 
+/** A fresh, all-zero input with sensible defaults (average diet, petrol car). */
 export const emptyInput = (): CarbonInput => ({
   transport: {
     car_km_per_week: 0,

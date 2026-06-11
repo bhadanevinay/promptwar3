@@ -15,6 +15,7 @@ from app.repository.base import EntryRepository
 
 @lru_cache
 def get_repository() -> EntryRepository:
+    """Return the configured entry repository (Firestore or in-memory), cached."""
     settings: Settings = get_settings()
     if settings.use_firestore:
         from app.repository.firestore_repo import FirestoreEntryRepository

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { type CarbonInput, type CarFuel, type DietType, emptyInput } from "../lib/types";
+import { NumberField } from "./NumberField";
 
 interface Props {
   onSubmit: (input: CarbonInput) => void;
@@ -35,15 +36,13 @@ const FUEL_OPTIONS: { value: CarFuel; label: string }[] = [
 export function CalculatorForm({ onSubmit, loading }: Props) {
   const [input, setInput] = useState<CarbonInput>(emptyInput);
 
-  const num =
-    (section: keyof CarbonInput, key: string) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = Number(e.target.value);
-      setInput((prev) => ({
-        ...prev,
-        [section]: { ...(prev[section] as object), [key]: Number.isNaN(value) ? 0 : value },
-      }));
-    };
+  // Type-safe section updaters — each patch is checked against the schema.
+  const patchTransport = (patch: Partial<CarbonInput["transport"]>) =>
+    setInput((p) => ({ ...p, transport: { ...p.transport, ...patch } }));
+  const patchHome = (patch: Partial<CarbonInput["home"]>) =>
+    setInput((p) => ({ ...p, home: { ...p.home, ...patch } }));
+  const patchConsumption = (patch: Partial<CarbonInput["consumption"]>) =>
+    setInput((p) => ({ ...p, consumption: { ...p.consumption, ...patch } }));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,30 +55,19 @@ export function CalculatorForm({ onSubmit, loading }: Props) {
 
       <fieldset>
         <legend>Transport</legend>
-        <div className="field">
-          <label htmlFor="car_km">Car distance per week (km)</label>
-          <input
-            id="car_km"
-            type="number"
-            min={0}
-            max={MAX_KM_WEEK}
-            step="any"
-            inputMode="decimal"
-            value={input.transport.car_km_per_week}
-            onChange={num("transport", "car_km_per_week")}
-          />
-        </div>
+        <NumberField
+          id="car_km"
+          label="Car distance per week (km)"
+          max={MAX_KM_WEEK}
+          value={input.transport.car_km_per_week}
+          onChange={(v) => patchTransport({ car_km_per_week: v })}
+        />
         <div className="field">
           <label htmlFor="car_fuel">Car fuel type</label>
           <select
             id="car_fuel"
             value={input.transport.car_fuel}
-            onChange={(e) =>
-              setInput((p) => ({
-                ...p,
-                transport: { ...p.transport, car_fuel: e.target.value as CarFuel },
-              }))
-            }
+            onChange={(e) => patchTransport({ car_fuel: e.target.value as CarFuel })}
           >
             {FUEL_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -88,86 +76,57 @@ export function CalculatorForm({ onSubmit, loading }: Props) {
             ))}
           </select>
         </div>
-        <div className="field">
-          <label htmlFor="transit_km">Public transit per week (km)</label>
-          <input
-            id="transit_km"
-            type="number"
-            min={0}
-            max={MAX_KM_WEEK}
-            step="any"
-            value={input.transport.public_transit_km_per_week}
-            onChange={num("transport", "public_transit_km_per_week")}
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="short_flights">Short-haul flights per year</label>
-          <input
-            id="short_flights"
-            type="number"
-            min={0}
-            max={MAX_FLIGHTS}
-            step={1}
-            value={input.transport.short_haul_flights_per_year}
-            onChange={num("transport", "short_haul_flights_per_year")}
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="long_flights">Long-haul flights per year</label>
-          <input
-            id="long_flights"
-            type="number"
-            min={0}
-            max={MAX_FLIGHTS}
-            step={1}
-            value={input.transport.long_haul_flights_per_year}
-            onChange={num("transport", "long_haul_flights_per_year")}
-          />
-        </div>
+        <NumberField
+          id="transit_km"
+          label="Public transit per week (km)"
+          max={MAX_KM_WEEK}
+          value={input.transport.public_transit_km_per_week}
+          onChange={(v) => patchTransport({ public_transit_km_per_week: v })}
+        />
+        <NumberField
+          id="short_flights"
+          label="Short-haul flights per year"
+          max={MAX_FLIGHTS}
+          step={1}
+          value={input.transport.short_haul_flights_per_year}
+          onChange={(v) => patchTransport({ short_haul_flights_per_year: v })}
+        />
+        <NumberField
+          id="long_flights"
+          label="Long-haul flights per year"
+          max={MAX_FLIGHTS}
+          step={1}
+          value={input.transport.long_haul_flights_per_year}
+          onChange={(v) => patchTransport({ long_haul_flights_per_year: v })}
+        />
       </fieldset>
 
       <fieldset>
         <legend>Home energy</legend>
-        <div className="field">
-          <label htmlFor="electricity">Electricity per month (kWh)</label>
-          <input
-            id="electricity"
-            type="number"
-            min={0}
-            max={MAX_KWH_MONTH}
-            step="any"
-            value={input.home.electricity_kwh_per_month}
-            onChange={num("home", "electricity_kwh_per_month")}
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="gas">Natural gas per month (kWh)</label>
-          <input
-            id="gas"
-            type="number"
-            min={0}
-            max={MAX_KWH_MONTH}
-            step="any"
-            value={input.home.natural_gas_kwh_per_month}
-            onChange={num("home", "natural_gas_kwh_per_month")}
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="household">People in household</label>
-          <input
-            id="household"
-            type="number"
-            min={1}
-            max={MAX_HOUSEHOLD}
-            step={1}
-            aria-describedby="household-hint"
-            value={input.home.household_size}
-            onChange={num("home", "household_size")}
-          />
-          <span className="hint" id="household-hint">
-            Home energy is shared across this many people.
-          </span>
-        </div>
+        <NumberField
+          id="electricity"
+          label="Electricity per month (kWh)"
+          max={MAX_KWH_MONTH}
+          value={input.home.electricity_kwh_per_month}
+          onChange={(v) => patchHome({ electricity_kwh_per_month: v })}
+        />
+        <NumberField
+          id="gas"
+          label="Natural gas per month (kWh)"
+          max={MAX_KWH_MONTH}
+          value={input.home.natural_gas_kwh_per_month}
+          onChange={(v) => patchHome({ natural_gas_kwh_per_month: v })}
+        />
+        <NumberField
+          id="household"
+          label="People in household"
+          min={1}
+          max={MAX_HOUSEHOLD}
+          step={1}
+          hint="Home energy is shared across this many people."
+          value={input.home.household_size}
+          onChange={(v) => patchHome({ household_size: v })}
+        />
       </fieldset>
 
       <fieldset>
@@ -186,30 +145,20 @@ export function CalculatorForm({ onSubmit, loading }: Props) {
             ))}
           </select>
         </div>
-        <div className="field">
-          <label htmlFor="goods">Goods spending per month (USD)</label>
-          <input
-            id="goods"
-            type="number"
-            min={0}
-            max={MAX_USD_MONTH}
-            step="any"
-            value={input.consumption.goods_spend_usd_per_month}
-            onChange={num("consumption", "goods_spend_usd_per_month")}
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="waste">Landfill waste per week (kg)</label>
-          <input
-            id="waste"
-            type="number"
-            min={0}
-            max={MAX_WASTE_WEEK}
-            step="any"
-            value={input.consumption.waste_kg_per_week}
-            onChange={num("consumption", "waste_kg_per_week")}
-          />
-        </div>
+        <NumberField
+          id="goods"
+          label="Goods spending per month (USD)"
+          max={MAX_USD_MONTH}
+          value={input.consumption.goods_spend_usd_per_month}
+          onChange={(v) => patchConsumption({ goods_spend_usd_per_month: v })}
+        />
+        <NumberField
+          id="waste"
+          label="Landfill waste per week (kg)"
+          max={MAX_WASTE_WEEK}
+          value={input.consumption.waste_kg_per_week}
+          onChange={(v) => patchConsumption({ waste_kg_per_week: v })}
+        />
       </fieldset>
 
       <button className="btn" type="submit" disabled={loading} aria-busy={loading}>

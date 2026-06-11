@@ -20,11 +20,18 @@ from __future__ import annotations
 
 from enum import Enum
 
+# ─────────────────────── Time conversions ───────────────────────────
+# Used to normalise weekly/monthly inputs to annual figures.
+WEEKS_PER_YEAR: int = 52
+MONTHS_PER_YEAR: int = 12
+
 # ──────────────────────────── Transport ─────────────────────────────
 # Per-kilometre factors for personal travel.
 
 
 class CarFuel(str, Enum):
+    """Car drivetrain type, which determines the per-km emission factor."""
+
     PETROL = "petrol"
     DIESEL = "diesel"
     HYBRID = "hybrid"
@@ -63,6 +70,8 @@ NATURAL_GAS_PER_KWH: float = 0.183
 
 
 class DietType(str, Enum):
+    """Diet profile, mapped to an annual food-production footprint."""
+
     HEAVY_MEAT = "heavy_meat"
     MEDIUM_MEAT = "medium_meat"
     LOW_MEAT = "low_meat"

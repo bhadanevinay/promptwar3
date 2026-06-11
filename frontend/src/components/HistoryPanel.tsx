@@ -27,7 +27,9 @@ export function HistoryPanel({ entries }: Props) {
       {trend !== null && (
         <p aria-live="polite">
           {trend < 0 ? (
-            <span className="under">▼ Down {formatTonnes(Math.abs(trend))} since your last entry.</span>
+            <span className="under">
+              ▼ Down {formatTonnes(Math.abs(trend))} since your last entry.
+            </span>
           ) : trend > 0 ? (
             <span className="over">▲ Up {formatTonnes(trend)} since your last entry.</span>
           ) : (

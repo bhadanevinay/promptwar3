@@ -1,5 +1,8 @@
 # 🌱 Carbon Footprint Awareness Platform
 
+[![CI](https://github.com/Auenchanters/Virtual-Prompt-was-Week-3/actions/workflows/ci.yml/badge.svg)](https://github.com/Auenchanters/Virtual-Prompt-was-Week-3/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 > **Virtual PromptWars — Challenge 3.** A web app that helps individuals
 > **understand, track, and reduce** their personal carbon footprint through
 > simple inputs and **personalized, AI-generated insights**.
@@ -102,10 +105,14 @@ account) — **there are no API keys or secrets in the repository**.
 
 ```text
 backend/    FastAPI app — carbon engine, insights, repository, routes, tests
-frontend/   React + TS SPA — components, api client, accessible UI, tests
+frontend/   React + TS SPA — components, hooks, api client, accessible UI, tests
+docs/       Architecture notes (docs/ARCHITECTURE.md)
 Dockerfile  multi-stage build (node build → python runtime)
-.github/    CI: lint + tests + build on every push to main
+.github/    CI: lint + format + types + tests + build on every push to main
 ```
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the layering rules and
+[CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow.
 
 ### Key endpoints
 
@@ -154,8 +161,10 @@ docker run -p 8080:8080 -e USE_GEMINI=false -e USE_FIRESTORE=false carbon-platfo
 | Suite | Command | Covers |
 | --- | --- | --- |
 | Backend (60 tests, **100% coverage**) | `cd backend && pytest` | carbon math, validation bounds, routes, both repositories (Firestore via fake client), Gemini parsing + fallback, SPA serving |
-| Frontend (40 tests, ~99% coverage) | `cd frontend && npm run test:coverage` | every component, API client, device identity, **automated accessibility (axe) per component** |
-| Lint / format / types | `ruff check .` · `ruff format --check .` · `npm run lint` · `npm run typecheck` | style, import order, type annotations, **jsx-a11y accessibility rules** |
+| Frontend (45 tests, ~99% coverage) | `cd frontend && npm run test:coverage` | every component and hook, API client, device identity, **automated accessibility (axe) per component** |
+| Lint | `ruff check .` · `npm run lint` | style, imports, naming, docstrings, complexity, **jsx-a11y accessibility rules** |
+| Format | `ruff format --check .` · `npm run format:check` | consistent formatting (ruff format, Prettier) |
+| Types | `mypy app` (**strict**) · `npm run typecheck` (strict tsc) | static type correctness end-to-end |
 
 Coverage is enforced, not aspirational: the backend build fails below 90%
 (`--cov-fail-under`), and the frontend fails below 90% statements / 85% branches
@@ -210,10 +219,10 @@ gcloud run deploy carbon-platform \
 
 | Axis | Where to look |
 | --- | --- |
-| **Code Quality** | Typed end-to-end (Pydantic + fully annotated Python + strict TS), layered modules, pure functions, `ruff` lint **and format** gates, ESLint, cited constants — no magic numbers. |
+| **Code Quality** | Typed end-to-end and **statically verified** (strict mypy + strict tsc), layered modules ([docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)), pure functions, ruff + ESLint lint gates, ruff-format + Prettier formatting gates, pre-commit hooks, every constant named and source-cited — no magic numbers. LICENSE, CONTRIBUTING, CHANGELOG maintained. |
 | **Security** | ADC (no secrets in repo), bounded input validation, CORS + CSP/security headers, non-root container, pinned deps. |
 | **Efficiency** | Stateless pure calc, single slim multi-stage image, cached settings, ~49 kB gzipped bundle. |
-| **Testing** | 100 tests across `pytest` + `vitest`, **enforced coverage thresholds** (backend 100% achieved), automated `axe` a11y assertions per component, all gated in CI. |
+| **Testing** | 105 tests across `pytest` + `vitest`, **enforced coverage thresholds** (backend 100% achieved), automated `axe` a11y assertions per component, all gated in CI. |
 | **Accessibility** | Semantic HTML, labelled controls with `aria-describedby` hints, skip link, keyboard support, AA-contrast theme, chart with data-table equivalent, `aria-live`/`role="status"` async announcements, `aria-busy` busy states, **jsx-a11y lint rules in CI**. |
 | **Google Services** | Cloud Run + Vertex AI (Gemini) + Firestore. |
 | **Problem Statement Alignment** | Understand → Track → Reduce loop with personalized, quantified insights. |
@@ -222,4 +231,4 @@ gcloud run deploy carbon-platform \
 
 ## License
 
-Created for the Virtual PromptWars Challenge 3. See repository for details.
+[MIT](LICENSE) — created for the Virtual PromptWars Challenge 3.

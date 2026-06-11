@@ -11,6 +11,7 @@ function generateId(): string {
   return `dev-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
 }
 
+/** Return the persistent anonymous device id, creating one if needed. */
 export function getDeviceId(): string {
   try {
     const existing = localStorage.getItem(STORAGE_KEY);

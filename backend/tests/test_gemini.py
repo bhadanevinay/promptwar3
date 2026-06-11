@@ -5,9 +5,9 @@ from __future__ import annotations
 import json
 from types import SimpleNamespace
 
-import app.insights.gemini as gemini
 from app.carbon.calculator import calculate_footprint
 from app.config import Settings
+from app.insights import gemini
 from app.models import CarbonInput, InsightsResponse, Recommendation
 
 

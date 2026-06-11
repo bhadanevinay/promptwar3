@@ -13,10 +13,14 @@ from app.models import CarbonInput, Entry, FootprintResult
 
 
 class InMemoryEntryRepository:
+    """EntryRepository backed by a process-local dictionary."""
+
     def __init__(self) -> None:
+        """Start with an empty per-device store."""
         self._by_device: dict[str, list[Entry]] = {}
 
     def add(self, device_id: str, data: CarbonInput, result: FootprintResult) -> Entry:
+        """Persist a new entry for the device and return it with id/timestamp."""
         entry = Entry(
             id=uuid.uuid4().hex,
             created_at=datetime.now(timezone.utc).isoformat(),
@@ -28,6 +32,7 @@ class InMemoryEntryRepository:
         return entry
 
     def list_for_device(self, device_id: str, limit: int = 50) -> list[Entry]:
+        """Return the device's entries, newest first."""
         entries = self._by_device.get(device_id, [])
         # Newest first.
         return sorted(entries, key=lambda e: e.created_at, reverse=True)[:limit]

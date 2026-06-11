@@ -96,7 +96,9 @@ describe("App", () => {
     vi.mocked(api.calculate).mockRejectedValueOnce(new Error("boom"));
     await renderApp();
     await userEvent.click(screen.getByRole("button", { name: /calculate my footprint/i }));
-    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/something went wrong/i));
+    await waitFor(() =>
+      expect(screen.getByRole("alert")).toHaveTextContent(/something went wrong/i),
+    );
   });
 
   it("shows an error message when saving fails", async () => {

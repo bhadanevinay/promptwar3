@@ -26,16 +26,17 @@ export function ResultBreakdown({ result }: Props) {
         per year
       </p>
       <p>
-        That is{" "}
-        <strong>{result.comparison.ratio_to_sustainable_target.toFixed(1)}×</strong> the
+        That is <strong>{result.comparison.ratio_to_sustainable_target.toFixed(1)}×</strong> the
         sustainable target ({formatTonnes(result.comparison.sustainable_target_annual_kg / 1000)})
-        and{" "}
-        <strong>{result.comparison.ratio_to_global_average.toFixed(1)}×</strong> the global
+        and <strong>{result.comparison.ratio_to_global_average.toFixed(1)}×</strong> the global
         average.
       </p>
 
       <h3>Breakdown by category</h3>
-      <div role="img" aria-label="Bar chart of emissions by category, values listed in the table below">
+      <div
+        role="img"
+        aria-label="Bar chart of emissions by category, values listed in the table below"
+      >
         {entries.map(([key, value]) => (
           <div className="bar-row" key={key}>
             <span>{categoryLabel(key)}</span>

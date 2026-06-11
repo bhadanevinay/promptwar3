@@ -21,12 +21,16 @@ _SUBCOLLECTION = "entries"
 
 
 class FirestoreEntryRepository:
+    """EntryRepository backed by Firestore subcollections per device."""
+
     def __init__(self, project_id: str) -> None:
+        """Create a Firestore client for the given project (auth via ADC)."""
         from google.cloud import firestore  # lazy import
 
         self._db = firestore.Client(project=project_id)
 
     def add(self, device_id: str, data: CarbonInput, result: FootprintResult) -> Entry:
+        """Persist a new entry under the device and return it with id/timestamp."""
         entry_id = uuid.uuid4().hex
         created_at = datetime.now(timezone.utc).isoformat()
         doc = (
@@ -51,6 +55,7 @@ class FirestoreEntryRepository:
         )
 
     def list_for_device(self, device_id: str, limit: int = 50) -> list[Entry]:
+        """Return the device's entries, newest first."""
         from google.cloud import firestore  # lazy import
 
         snapshots = (

@@ -26,6 +26,8 @@ jobs:
         run: ruff check .
       - name: Format check (ruff)
         run: ruff format --check .
+      - name: Type check (mypy, strict)
+        run: mypy app
       - name: Tests (pytest, coverage gate ≥90%)
         run: pytest
 
@@ -48,6 +50,8 @@ jobs:
         run: npm run typecheck
       - name: Lint (ESLint + jsx-a11y accessibility rules)
         run: npm run lint
+      - name: Format check (Prettier)
+        run: npm run format:check
       - name: Unit + accessibility tests (coverage gate ≥90%)
         run: npm run test:coverage
       - name: Production build
