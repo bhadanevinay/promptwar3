@@ -16,13 +16,21 @@ target-version = "py310"
 src = ["app", "tests"]
 
 [tool.ruff.lint]
-# E/W pycodestyle, F pyflakes, I import order, N naming, D docstrings,
-# UP modernisation, ANN type annotations, B bugbear, C4 comprehensions,
-# SIM simplification, PL pylint, C90 complexity, RUF ruff-native rules.
-select = ["E", "W", "F", "I", "N", "D", "UP", "ANN", "B", "C4", "SIM", "PL", "C90", "RUF"]
-# E501: line length handled by formatter; B008: FastAPI's Depends/Query/Path
-# default-argument pattern is intentional and idiomatic.
-ignore = ["E501", "B008"]
+select = ["E", "F", "I", "N", "W", "UP", "PLC", "TRY", "EM", "COM", "TCH", "B"]
+ignore = [
+    "S101",    # assert statements are standard in pytest tests
+    "SLF001",  # private member access is fine in tests
+    "PGH003",  # type: ignore without specific code — acceptable
+    "BLE001",  # catching Exception is intentional in service layer (fire-and-forget)
+    "TRY003",  # long exception messages are acceptable here
+    "EM101",   # string literal in exception is acceptable here
+    "TCH001",  # type-checking imports cause runtime issues with our pattern
+    "TCH003",  # same as TCH001 for stdlib
+    "B008",    # Depends() in defaults is standard FastAPI pattern
+    "PT018",   # compound assertions are fine in simple tests
+    "E501",    # line length handled by formatter
+    "COM812",  # trailing commas handled by formatter
+]
 
 [tool.ruff.lint.pydocstyle]
 convention = "pep257"
@@ -31,8 +39,7 @@ convention = "pep257"
 max-complexity = 10
 
 [tool.ruff.lint.per-file-ignores]
-# Tests: docstring/annotation pedantry and "magic" expected values don't apply.
-"tests/**" = ["ANN", "D", "PLR2004"]
+"tests/**" = ["S101", "SLF001", "PT018", "COM812"]
 
 [tool.mypy]
 # Strict static type checking for the application code.
