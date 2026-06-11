@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import logging
+from typing import TYPE_CHECKING
 
 try:
     from google import genai
@@ -23,7 +24,9 @@ except ImportError:
     genai = None
     types = None
 
-from app.config import Settings
+if TYPE_CHECKING:
+    from app.config import Settings
+
 from app.insights.rules import generate_rule_based_insights
 from app.models import CarbonInput, FootprintResult, InsightsResponse, Recommendation
 
@@ -70,7 +73,9 @@ def _build_prompt(data: CarbonInput, result: FootprintResult) -> str:
 
 
 def _call_gemini(
-    data: CarbonInput, result: FootprintResult, settings: Settings
+    data: CarbonInput,
+    result: FootprintResult,
+    settings: Settings,
 ) -> InsightsResponse:
     """Invoke Gemini on Vertex AI and parse a structured response.
 
@@ -78,9 +83,8 @@ def _call_gemini(
     keeps unit tests and the rule-based path dependency-free.
     """
     if genai is None or types is None:
-        raise RuntimeError(
-            "Google GenAI SDK (google-genai) is not installed in the active environment."
-        )
+        msg = "Google GenAI SDK (google-genai) is not installed in the active environment."
+        raise RuntimeError(msg)
 
     client = genai.Client(vertexai=True, project=settings.project_id, location=settings.region)
     response = client.models.generate_content(
