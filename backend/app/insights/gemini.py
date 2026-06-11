@@ -16,6 +16,13 @@ from __future__ import annotations
 import json
 import logging
 
+try:
+    from google import genai
+    from google.genai import types
+except ImportError:
+    genai = None  # type: ignore
+    types = None  # type: ignore
+
 from app.config import Settings
 from app.insights.rules import generate_rule_based_insights
 from app.models import CarbonInput, FootprintResult, InsightsResponse, Recommendation
@@ -70,9 +77,6 @@ def _call_gemini(
     Imported lazily so the SDK/credentials are only required when actually used —
     keeps unit tests and the rule-based path dependency-free.
     """
-    from google import genai
-    from google.genai import types
-
     client = genai.Client(vertexai=True, project=settings.project_id, location=settings.region)
     response = client.models.generate_content(
         model=settings.gemini_model,

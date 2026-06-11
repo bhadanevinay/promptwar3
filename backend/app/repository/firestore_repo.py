@@ -14,6 +14,8 @@ from __future__ import annotations
 import uuid
 from datetime import datetime, timezone
 
+from google.cloud import firestore
+
 from app.models import CarbonInput, Entry, FootprintResult
 
 _COLLECTION = "devices"
@@ -25,8 +27,6 @@ class FirestoreEntryRepository:
 
     def __init__(self, project_id: str) -> None:
         """Create a Firestore client for the given project (auth via ADC)."""
-        from google.cloud import firestore  # lazy import
-
         self._db = firestore.Client(project=project_id)
 
     def add(self, device_id: str, data: CarbonInput, result: FootprintResult) -> Entry:
@@ -56,8 +56,6 @@ class FirestoreEntryRepository:
 
     def list_for_device(self, device_id: str, limit: int = 50) -> list[Entry]:
         """Return the device's entries, newest first."""
-        from google.cloud import firestore  # lazy import
-
         snapshots = (
             self._db.collection(_COLLECTION)
             .document(device_id)

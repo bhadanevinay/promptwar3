@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import datetime
+
 from app.carbon.calculator import calculate_footprint
 from app.models import CarbonInput
 from app.repository.memory_repo import InMemoryEntryRepository
@@ -37,8 +39,6 @@ def test_list_respects_limit():
 
 
 def test_list_returns_newest_first(monkeypatch):
-    from datetime import datetime
-
     ticks = iter(range(1, 10))
 
     class _TickingDatetime:

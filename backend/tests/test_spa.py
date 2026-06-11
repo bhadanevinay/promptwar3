@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import pytest
+from app import config, deps, main
+from fastapi.testclient import TestClient
 
 
 @pytest.fixture
@@ -17,13 +19,9 @@ def spa_client(tmp_path, monkeypatch):
     monkeypatch.setenv("USE_GEMINI", "false")
     monkeypatch.setenv("USE_FIRESTORE", "false")
 
-    from app import config, deps, main
-
     config.get_settings.cache_clear()
     deps.get_repository.cache_clear()
     monkeypatch.setattr(main, "_STATIC_DIR", static)
-
-    from fastapi.testclient import TestClient
 
     with TestClient(main.create_app()) as client:
         yield client
