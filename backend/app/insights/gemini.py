@@ -20,8 +20,8 @@ try:
     from google import genai
     from google.genai import types
 except ImportError:
-    genai = None  # type: ignore
-    types = None  # type: ignore
+    genai = None
+    types = None
 
 from app.config import Settings
 from app.insights.rules import generate_rule_based_insights
