@@ -23,4 +23,10 @@ describe("format helpers", () => {
   it("returns the raw string for an invalid date", () => {
     expect(formatDate("not-a-date")).toBe("not-a-date");
   });
+
+  it("renders a locale string for a valid ISO date", () => {
+    const formatted = formatDate("2026-01-15T12:30:00Z");
+    expect(formatted).not.toBe("2026-01-15T12:30:00Z");
+    expect(formatted).toMatch(/2026/);
+  });
 });

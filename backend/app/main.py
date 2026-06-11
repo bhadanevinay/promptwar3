@@ -7,9 +7,10 @@ whole platform runs as a single Cloud Run container.
 
 from __future__ import annotations
 
+from collections.abc import Awaitable, Callable
 from pathlib import Path
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -35,6 +36,7 @@ _SECURITY_HEADERS = {
 
 
 def create_app() -> FastAPI:
+    """Build the FastAPI application: middleware, routers, and SPA mount."""
     settings = get_settings()
     app = FastAPI(
         title="Carbon Footprint Awareness Platform",
@@ -51,7 +53,9 @@ def create_app() -> FastAPI:
     )
 
     @app.middleware("http")
-    async def security_headers(request: Request, call_next):
+    async def security_headers(
+        request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
         response = await call_next(request)
         for key, value in _SECURITY_HEADERS.items():
             response.headers.setdefault(key, value)
@@ -78,7 +82,7 @@ def _mount_spa(app: FastAPI) -> None:
     index = _STATIC_DIR / "index.html"
 
     @app.get("/{full_path:path}", include_in_schema=False)
-    async def spa(full_path: str):  # noqa: ANN202
+    async def spa(full_path: str) -> Response:
         # API 404s should stay JSON, not fall through to index.html.
         if full_path.startswith("api/"):
             return JSONResponse({"detail": "Not Found"}, status_code=404)

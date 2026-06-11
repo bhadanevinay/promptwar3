@@ -11,4 +11,5 @@ router = APIRouter(tags=["system"])
 
 @router.get("/api/health")
 def health() -> dict[str, str]:
+    """Report service liveness and the running application version."""
     return {"status": "ok", "version": __version__}

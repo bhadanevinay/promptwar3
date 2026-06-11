@@ -20,5 +20,18 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",
     css: false,
+    coverage: {
+      provider: "v8",
+      include: ["src/**/*.{ts,tsx}"],
+      // main.tsx is the DOM bootstrap; test helpers and type decls carry no logic.
+      exclude: ["src/main.tsx", "src/test/**", "src/**/*.d.ts", "src/**/*.test.*"],
+      // Hard gates: CI fails if coverage regresses below these thresholds.
+      thresholds: {
+        statements: 90,
+        branches: 85,
+        functions: 90,
+        lines: 90,
+      },
+    },
   },
 });

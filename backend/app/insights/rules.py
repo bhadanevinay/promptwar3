@@ -103,9 +103,7 @@ def _consumption_recommendation(amount: float) -> Recommendation | None:
     )
 
 
-def generate_rule_based_insights(
-    data: CarbonInput, result: FootprintResult
-) -> InsightsResponse:
+def generate_rule_based_insights(data: CarbonInput, result: FootprintResult) -> InsightsResponse:
     """Produce ranked, quantified recommendations from the footprint breakdown."""
     builders = {
         "transport": lambda amt: _transport_recommendation(data, amt),

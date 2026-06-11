@@ -167,6 +167,12 @@ legend {
   height: 100%;
 }
 
+.plain-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
 .recommendation {
   border-left: 4px solid var(--primary);
   padding: 0.6rem 0.9rem;

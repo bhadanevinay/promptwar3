@@ -49,24 +49,39 @@ beforeEach(() => {
   });
 });
 
+/** Render the app and wait for the initial history load to settle. */
+async function renderApp() {
+  const view = render(<App />);
+  await waitFor(() => expect(api.listEntries).toHaveBeenCalled());
+  return view;
+}
+
 describe("App", () => {
   it("renders with no accessibility violations", async () => {
-    const { container } = render(<App />);
+    const { container } = await renderApp();
     expect(await axe(container)).toHaveNoViolations();
   });
 
   it("calculates and shows results plus personalized insights", async () => {
-    render(<App />);
+    await renderApp();
     await userEvent.click(screen.getByRole("button", { name: /calculate my footprint/i }));
 
     await waitFor(() => expect(screen.getByText(/your estimated footprint/i)).toBeInTheDocument());
-    expect(screen.getByText(/personalized insights/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /personalized insights/i })).toBeInTheDocument();
     expect(screen.getByText(/drive less/i)).toBeInTheDocument();
     expect(api.calculate).toHaveBeenCalledTimes(1);
   });
 
+  it("announces readiness to screen readers via the status live region", async () => {
+    await renderApp();
+    await userEvent.click(screen.getByRole("button", { name: /calculate my footprint/i }));
+    await waitFor(() =>
+      expect(screen.getByRole("status")).toHaveTextContent(/results .* are ready below/i),
+    );
+  });
+
   it("saves an entry and reloads history", async () => {
-    render(<App />);
+    await renderApp();
     await userEvent.click(screen.getByRole("button", { name: /calculate my footprint/i }));
     await waitFor(() => screen.getByRole("button", { name: /save this entry/i }));
     await userEvent.click(screen.getByRole("button", { name: /save this entry/i }));
@@ -74,12 +89,22 @@ describe("App", () => {
     await waitFor(() => expect(api.saveEntry).toHaveBeenCalledTimes(1));
     // listEntries: once on mount, once after save.
     expect(api.listEntries).toHaveBeenCalledTimes(2);
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent(/entry saved/i));
   });
 
   it("shows an error message when calculation fails", async () => {
     vi.mocked(api.calculate).mockRejectedValueOnce(new Error("boom"));
-    render(<App />);
+    await renderApp();
     await userEvent.click(screen.getByRole("button", { name: /calculate my footprint/i }));
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/something went wrong/i));
+  });
+
+  it("shows an error message when saving fails", async () => {
+    vi.mocked(api.saveEntry).mockRejectedValueOnce(new Error("boom"));
+    await renderApp();
+    await userEvent.click(screen.getByRole("button", { name: /calculate my footprint/i }));
+    await waitFor(() => screen.getByRole("button", { name: /save this entry/i }));
+    await userEvent.click(screen.getByRole("button", { name: /save this entry/i }));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/could not save/i));
   });
 });

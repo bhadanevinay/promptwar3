@@ -22,7 +22,9 @@ def test_empty_input_produces_diet_only_footprint():
     assert result.breakdown_kg["transport"] == 0.0
     assert result.breakdown_kg["home"] == 0.0
     assert result.breakdown_kg["consumption"] == 0.0
-    assert result.breakdown_kg["diet"] == pytest.approx(factors.DIET_ANNUAL_KG[factors.DietType.VEGAN])
+    assert result.breakdown_kg["diet"] == pytest.approx(
+        factors.DIET_ANNUAL_KG[factors.DietType.VEGAN]
+    )
     assert result.total_annual_kg == pytest.approx(factors.DIET_ANNUAL_KG[factors.DietType.VEGAN])
 
 
@@ -42,7 +44,9 @@ def test_electric_car_lower_than_petrol():
         CarbonInput(transport=TransportInput(car_km_per_week=100, car_fuel=factors.CarFuel.PETROL))
     )
     electric = calculate_footprint(
-        CarbonInput(transport=TransportInput(car_km_per_week=100, car_fuel=factors.CarFuel.ELECTRIC))
+        CarbonInput(
+            transport=TransportInput(car_km_per_week=100, car_fuel=factors.CarFuel.ELECTRIC)
+        )
     )
     assert electric.breakdown_kg["transport"] < petrol.breakdown_kg["transport"]
 
@@ -79,9 +83,7 @@ def test_consumption_combines_goods_and_waste():
             diet=factors.DietType.VEGAN,
         )
     )
-    expected = (
-        200 * 12 * factors.GOODS_PER_USD_MONTHLY + 5 * 52 * factors.WASTE_PER_KG
-    )
+    expected = 200 * 12 * factors.GOODS_PER_USD_MONTHLY + 5 * 52 * factors.WASTE_PER_KG
     assert result.breakdown_kg["consumption"] == pytest.approx(expected)
 
 
@@ -109,9 +111,7 @@ def test_comparison_ratios():
 
 
 def test_values_are_rounded_and_finite():
-    result = calculate_footprint(
-        CarbonInput(transport=TransportInput(car_km_per_week=123.456))
-    )
+    result = calculate_footprint(CarbonInput(transport=TransportInput(car_km_per_week=123.456)))
     for v in result.breakdown_kg.values():
         assert math.isfinite(v)
         assert round(v, 2) == v

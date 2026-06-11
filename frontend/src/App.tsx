@@ -16,6 +16,9 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Announced via a polite live region so screen reader users hear when
+  // asynchronous results have arrived below the form.
+  const [status, setStatus] = useState("");
 
   const loadHistory = useCallback(async () => {
     try {
@@ -32,11 +35,13 @@ export default function App() {
   const handleCalculate = async (input: CarbonInput) => {
     setLoading(true);
     setError(null);
+    setStatus("");
     try {
       const [calc, ins] = await Promise.all([api.calculate(input), api.getInsights(input)]);
       setResult(calc);
       setInsights(ins);
       setLastInput(input);
+      setStatus("Your footprint results and personalized insights are ready below.");
     } catch {
       setError("Something went wrong calculating your footprint. Please try again.");
     } finally {
@@ -51,6 +56,7 @@ export default function App() {
     try {
       await api.saveEntry(deviceId, lastInput, result);
       await loadHistory();
+      setStatus("Entry saved to your history.");
     } catch {
       setError("Could not save this entry. Please try again.");
     } finally {
@@ -74,13 +80,21 @@ export default function App() {
         <div role="alert" aria-live="assertive">
           {error && <p className="error">{error}</p>}
         </div>
+        <p role="status" className="visually-hidden">
+          {status}
+        </p>
 
         {result && (
           <>
             <ResultBreakdown result={result} />
             {insights && <InsightsPanel insights={insights} />}
             <div className="card">
-              <button className="btn secondary" onClick={handleSave} disabled={saving}>
+              <button
+                className="btn secondary"
+                onClick={handleSave}
+                disabled={saving}
+                aria-busy={saving}
+              >
                 {saving ? "Saving…" : "Save this entry to my history"}
               </button>
             </div>

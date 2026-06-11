@@ -24,7 +24,9 @@ jobs:
         run: pip install -r requirements-dev.txt
       - name: Lint (ruff)
         run: ruff check .
-      - name: Tests (pytest + coverage)
+      - name: Format check (ruff)
+        run: ruff format --check .
+      - name: Tests (pytest, coverage gate ≥90%)
         run: pytest
 
   frontend:
@@ -44,7 +46,9 @@ jobs:
         run: npm ci
       - name: Typecheck
         run: npm run typecheck
-      - name: Unit + accessibility tests
-        run: npm test
+      - name: Lint (ESLint + jsx-a11y accessibility rules)
+        run: npm run lint
+      - name: Unit + accessibility tests (coverage gate ≥90%)
+        run: npm run test:coverage
       - name: Production build
         run: npm run build

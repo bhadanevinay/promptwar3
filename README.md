@@ -153,12 +153,15 @@ docker run -p 8080:8080 -e USE_GEMINI=false -e USE_FIRESTORE=false carbon-platfo
 
 | Suite | Command | Covers |
 | --- | --- | --- |
-| Backend | `cd backend && pytest` | carbon math, validation, routes, repo, Gemini fallback |
-| Frontend | `cd frontend && npm test` | components, API flow, **automated accessibility (axe)** |
-| Lint / types | `ruff check .` · `npm run typecheck` | code quality gates |
+| Backend (60 tests, **100% coverage**) | `cd backend && pytest` | carbon math, validation bounds, routes, both repositories (Firestore via fake client), Gemini parsing + fallback, SPA serving |
+| Frontend (40 tests, ~99% coverage) | `cd frontend && npm run test:coverage` | every component, API client, device identity, **automated accessibility (axe) per component** |
+| Lint / format / types | `ruff check .` · `ruff format --check .` · `npm run lint` · `npm run typecheck` | style, import order, type annotations, **jsx-a11y accessibility rules** |
 
-CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs all of the above
-on every push to `main`.
+Coverage is enforced, not aspirational: the backend build fails below 90%
+(`--cov-fail-under`), and the frontend fails below 90% statements / 85% branches
+(vitest `coverage.thresholds`). CI
+([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs every gate on each
+push to `main`.
 
 ---
 
@@ -207,11 +210,11 @@ gcloud run deploy carbon-platform \
 
 | Axis | Where to look |
 | --- | --- |
-| **Code Quality** | Typed end-to-end (Pydantic + TS), layered modules, pure functions, `ruff`, cited constants. |
+| **Code Quality** | Typed end-to-end (Pydantic + fully annotated Python + strict TS), layered modules, pure functions, `ruff` lint **and format** gates, ESLint, cited constants — no magic numbers. |
 | **Security** | ADC (no secrets in repo), bounded input validation, CORS + CSP/security headers, non-root container, pinned deps. |
 | **Efficiency** | Stateless pure calc, single slim multi-stage image, cached settings, ~49 kB gzipped bundle. |
-| **Testing** | `pytest` + `vitest` + automated `axe` a11y assertions + CI. |
-| **Accessibility** | Semantic HTML, labelled controls, skip link, keyboard support, AA-contrast theme, chart has a data-table equivalent, `aria-live` updates. |
+| **Testing** | 100 tests across `pytest` + `vitest`, **enforced coverage thresholds** (backend 100% achieved), automated `axe` a11y assertions per component, all gated in CI. |
+| **Accessibility** | Semantic HTML, labelled controls with `aria-describedby` hints, skip link, keyboard support, AA-contrast theme, chart with data-table equivalent, `aria-live`/`role="status"` async announcements, `aria-busy` busy states, **jsx-a11y lint rules in CI**. |
 | **Google Services** | Cloud Run + Vertex AI (Gemini) + Firestore. |
 | **Problem Statement Alignment** | Understand → Track → Reduce loop with personalized, quantified insights. |
 

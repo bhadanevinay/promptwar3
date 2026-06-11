@@ -6,6 +6,15 @@ interface Props {
   loading: boolean;
 }
 
+// Input ceilings mirror the backend Pydantic bounds (app/models.py) so the
+// browser blocks out-of-range values before the API would reject them.
+const MAX_KM_WEEK = 20_000;
+const MAX_KWH_MONTH = 100_000;
+const MAX_FLIGHTS = 200;
+const MAX_USD_MONTH = 1_000_000;
+const MAX_WASTE_WEEK = 1_000;
+const MAX_HOUSEHOLD = 50;
+
 const DIET_OPTIONS: { value: DietType; label: string }[] = [
   { value: "heavy_meat", label: "Heavy meat eater" },
   { value: "medium_meat", label: "Average meat eater" },
@@ -53,6 +62,8 @@ export function CalculatorForm({ onSubmit, loading }: Props) {
             id="car_km"
             type="number"
             min={0}
+            max={MAX_KM_WEEK}
+            step="any"
             inputMode="decimal"
             value={input.transport.car_km_per_week}
             onChange={num("transport", "car_km_per_week")}
@@ -83,6 +94,8 @@ export function CalculatorForm({ onSubmit, loading }: Props) {
             id="transit_km"
             type="number"
             min={0}
+            max={MAX_KM_WEEK}
+            step="any"
             value={input.transport.public_transit_km_per_week}
             onChange={num("transport", "public_transit_km_per_week")}
           />
@@ -93,6 +106,8 @@ export function CalculatorForm({ onSubmit, loading }: Props) {
             id="short_flights"
             type="number"
             min={0}
+            max={MAX_FLIGHTS}
+            step={1}
             value={input.transport.short_haul_flights_per_year}
             onChange={num("transport", "short_haul_flights_per_year")}
           />
@@ -103,6 +118,8 @@ export function CalculatorForm({ onSubmit, loading }: Props) {
             id="long_flights"
             type="number"
             min={0}
+            max={MAX_FLIGHTS}
+            step={1}
             value={input.transport.long_haul_flights_per_year}
             onChange={num("transport", "long_haul_flights_per_year")}
           />
@@ -117,6 +134,8 @@ export function CalculatorForm({ onSubmit, loading }: Props) {
             id="electricity"
             type="number"
             min={0}
+            max={MAX_KWH_MONTH}
+            step="any"
             value={input.home.electricity_kwh_per_month}
             onChange={num("home", "electricity_kwh_per_month")}
           />
@@ -127,6 +146,8 @@ export function CalculatorForm({ onSubmit, loading }: Props) {
             id="gas"
             type="number"
             min={0}
+            max={MAX_KWH_MONTH}
+            step="any"
             value={input.home.natural_gas_kwh_per_month}
             onChange={num("home", "natural_gas_kwh_per_month")}
           />
@@ -137,10 +158,15 @@ export function CalculatorForm({ onSubmit, loading }: Props) {
             id="household"
             type="number"
             min={1}
+            max={MAX_HOUSEHOLD}
+            step={1}
+            aria-describedby="household-hint"
             value={input.home.household_size}
             onChange={num("home", "household_size")}
           />
-          <span className="hint">Home energy is shared across this many people.</span>
+          <span className="hint" id="household-hint">
+            Home energy is shared across this many people.
+          </span>
         </div>
       </fieldset>
 
@@ -166,6 +192,8 @@ export function CalculatorForm({ onSubmit, loading }: Props) {
             id="goods"
             type="number"
             min={0}
+            max={MAX_USD_MONTH}
+            step="any"
             value={input.consumption.goods_spend_usd_per_month}
             onChange={num("consumption", "goods_spend_usd_per_month")}
           />
@@ -176,13 +204,15 @@ export function CalculatorForm({ onSubmit, loading }: Props) {
             id="waste"
             type="number"
             min={0}
+            max={MAX_WASTE_WEEK}
+            step="any"
             value={input.consumption.waste_kg_per_week}
             onChange={num("consumption", "waste_kg_per_week")}
           />
         </div>
       </fieldset>
 
-      <button className="btn" type="submit" disabled={loading}>
+      <button className="btn" type="submit" disabled={loading} aria-busy={loading}>
         {loading ? "Calculating…" : "Calculate my footprint"}
       </button>
     </form>

@@ -21,7 +21,7 @@ export function InsightsPanel({ insights }: Props) {
       <p>{insights.summary}</p>
 
       <h3>Recommended actions</h3>
-      <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+      <ul className="plain-list">
         {insights.recommendations.map((rec, i) => (
           <li className="recommendation" key={`${rec.category}-${i}`}>
             <strong>{categoryLabel(rec.category)}:</strong> {rec.action}
