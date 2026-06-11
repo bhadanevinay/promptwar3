@@ -14,7 +14,7 @@ Run** as one container.
 
 ## 🔗 Live demo
 
-**<https://carbon-platform-988953139540.us-central1.run.app>**
+**<https://carbon-platform-87459682334.us-central1.run.app>**
 
 > Running on Cloud Run with live Gemini (Vertex AI) insights and Firestore-backed
 > tracking in project `promptwar-carbonfootprint` (`us-central1`).
@@ -193,7 +193,7 @@ gcloud run deploy carbon-platform \
 #   roles/aiplatform.user  (Gemini)   and   roles/datastore.user  (Firestore)
 ```
 
-> **Live deployment:** <https://carbon-platform-988953139540.us-central1.run.app>
+> **Live deployment:** <https://carbon-platform-87459682334.us-central1.run.app>
 
 ---
 
