@@ -1,6 +1,6 @@
 # 🌱 Carbon Footprint Awareness Platform
 
-[![CI](https://github.com/Auenchanters/Virtual-Prompt-was-Week-3/actions/workflows/ci.yml/badge.svg)](https://github.com/Auenchanters/Virtual-Prompt-was-Week-3/actions/workflows/ci.yml)
+[![CI](https://github.com/bhadanevinay/promptwar3/actions/workflows/ci.yml/badge.svg)](https://github.com/bhadanevinay/promptwar3/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 > **Virtual PromptWars — Challenge 3.** A web app that helps individuals
@@ -17,7 +17,7 @@ Run** as one container.
 **<https://carbon-platform-988953139540.us-central1.run.app>**
 
 > Running on Cloud Run with live Gemini (Vertex AI) insights and Firestore-backed
-> tracking in project `virtual-prompt-week-3` (`us-central1`).
+> tracking in project `promptwar-carbonfootprint` (`us-central1`).
 
 ---
 
@@ -177,7 +177,7 @@ push to `main`.
 ## 6. Deploying to Google Cloud Run
 
 ```bash
-gcloud config set project virtual-prompt-week-3
+gcloud config set project promptwar-carbonfootprint
 gcloud services enable run.googleapis.com aiplatform.googleapis.com \
     firestore.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
 
@@ -187,7 +187,7 @@ gcloud firestore databases create --location=us-central1
 # Build + deploy straight from source:
 gcloud run deploy carbon-platform \
     --source . --region us-central1 --allow-unauthenticated \
-    --set-env-vars PROJECT_ID=virtual-prompt-week-3,REGION=us-central1,USE_GEMINI=true,USE_FIRESTORE=true
+    --set-env-vars PROJECT_ID=promptwar-carbonfootprint,REGION=us-central1,USE_GEMINI=true,USE_FIRESTORE=true
 
 # Grant the runtime service account least-privilege access:
 #   roles/aiplatform.user  (Gemini)   and   roles/datastore.user  (Firestore)
