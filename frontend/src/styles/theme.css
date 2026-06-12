@@ -3,7 +3,7 @@
    WCAG AA compliant (≥4.5:1 for text). Glassmorphism + Inter.
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
 
 :root {
   /* Core palette */
@@ -15,18 +15,18 @@
   --glass-border: rgba(255, 255, 255, 0.1);
 
   /* Text */
-  --text: #e8f5f0;          /* ~15:1 on bg */
-  --muted: #8ba89b;         /* ~4.6:1 on bg */
+  --text: #e8f5f0; /* ~15:1 on bg */
+  --muted: #8ba89b; /* ~4.6:1 on bg */
   --muted-light: #b0c9bf;
 
   /* Brand green */
-  --primary: #22c55e;       /* vibrant green */
+  --primary: #22c55e; /* vibrant green */
   --primary-dark: #16a34a;
   --primary-glow: rgba(34, 197, 94, 0.15);
   --primary-glow-strong: rgba(34, 197, 94, 0.3);
 
   /* Accent / warning */
-  --accent: #f97316;        /* orange */
+  --accent: #f97316; /* orange */
   --accent-glow: rgba(249, 115, 22, 0.2);
 
   /* Borders & focus */
@@ -51,7 +51,11 @@
 
 body {
   margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
@@ -115,7 +119,7 @@ header.app-header h1 {
 }
 
 header.app-header h1::before {
-  content: '🌱';
+  content: "🌱";
   -webkit-text-fill-color: initial;
   font-size: 1.1rem;
 }
@@ -145,14 +149,15 @@ main {
   box-shadow: var(--shadow);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  transition: border-color var(--duration) var(--ease),
-              box-shadow var(--duration) var(--ease);
+  transition:
+    border-color var(--duration) var(--ease),
+    box-shadow var(--duration) var(--ease);
   position: relative;
   overflow: hidden;
 }
 
 .card::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, rgba(34, 197, 94, 0.03) 0%, transparent 60%);
@@ -203,9 +208,10 @@ select {
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.05);
   color: var(--text);
-  transition: border-color var(--duration) var(--ease),
-              box-shadow var(--duration) var(--ease),
-              background var(--duration) var(--ease);
+  transition:
+    border-color var(--duration) var(--ease),
+    box-shadow var(--duration) var(--ease),
+    background var(--duration) var(--ease);
   -webkit-appearance: none;
   appearance: none;
 }
@@ -266,14 +272,15 @@ legend {
   letter-spacing: 0.01em;
   position: relative;
   overflow: hidden;
-  transition: transform var(--duration) var(--ease),
-              box-shadow var(--duration) var(--ease),
-              opacity var(--duration) var(--ease);
+  transition:
+    transform var(--duration) var(--ease),
+    box-shadow var(--duration) var(--ease),
+    opacity var(--duration) var(--ease);
   box-shadow: 0 2px 12px var(--primary-glow-strong);
 }
 
 .btn::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: rgba(255, 255, 255, 0);
@@ -370,8 +377,9 @@ legend {
   background: rgba(34, 197, 94, 0.05);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   margin: 0.6rem 0;
-  transition: background var(--duration) var(--ease),
-              border-color var(--duration) var(--ease);
+  transition:
+    background var(--duration) var(--ease),
+    border-color var(--duration) var(--ease);
 }
 
 .recommendation:hover {
